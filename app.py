@@ -159,7 +159,7 @@ def upload_file():
     return render_template('index.html', user_email=current_user.email, is_admin=current_user.is_admin)
 
 
-with app.app_context():
-    # This will run on every server start and attempt to create tables.
-    # It will only succeed the first time.
-    db.create_all()
+if __name__ == '__main__':
+    with app.app_context():
+        db.create_all() 
+    app.run(debug=True)
