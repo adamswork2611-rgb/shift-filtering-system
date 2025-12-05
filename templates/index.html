@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Web Shift Filtering Tool</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"> 
+    </head>
+
+    <body>
+        <div class="header">
+            <img src="{{ url_for('static', filename='images/F34.SI_BIG.D-2bbdc6f7.png') }}"
+            alt="Company Logo"
+            height="35">
+            {% if user_email %}
+            <div style="color: white; padding-right: 20px;">
+                Logged in as : <b>{{ user_email }}</b> 
+                {% if is_admin %}
+                | <a class="link" href="{{ url_for('manage_users') }}">Manage Users</a>
+                {% endif %}
+                | 
+                <a class="link" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="main">
+            <h1 class="title">Filter Clock-in and Clock-out Time</h1>
+        
+            <p class="subtitle">Select Excel files to filter workers first clock-in and last clock-out time for payment calculation</p>
+
+            <div class="button-container">
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="file" id="files" name="files" accept=".xls,.xlsx" multiple required>
+                    <button class="button" type="button" onclick="document.getElementById('files').click()">Select Excel Files</button>
+                    <p id="file-names" class="subtitle"></p>
+                    <button class="button" type="submit">Download Filtered Excels</button>
+                </form>
+            </div>
+        </div>
+        <script>
+            document.getElementById('files').addEventListener('change', function() {
+                var file_list = this.files;
+                var outputElement = document.getElementById('file-names');
+        
+                if (file_list.length > 0) {
+                 outputElement.textContent = 'Selected ' + file_list.length + ' Excel Files';
+                } else {
+                    outputElement.textContent = '';
+                }
+            });
+        </script>
+    </body>
+
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html lang="en">
+    <head>
+        <title>Manage Users</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet"> 
+    </head>
+
+    <body>
+        <div class="header">
+            <img class="logo" src="{{ url_for('static', filename='images/F34.SI_BIG.D-2bbdc6f7.png') }}"
+            alt="Company Logo"
+            height="35">
+            <div style="color: white; padding-right: 20px;">
+                Logged in as: <b>{{ current_user.email }} (Admin)</b> 
+                | 
+                <a class="link" href="{{ url_for('upload_file') }}">Home</a>
+                | 
+                <a class="link" href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+
+        <div class="main">
+            <h1 class="title">Manage User Accounts</h1>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <p class="subtitle" style="color: red;">{{ messages[0] }}</p>
+            {% endif %}
+            {% endwith %}
+
+            <h2>Pending Approval ({{ pending_users|length }})</h2>
+            {% if pending_users %}
+            <table style="width: 50%; margin: 0 auto;">
+                <thead>
+                    <tr>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Email</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in pending_users %}
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ccc;">{{ user.email }}</td>
+                        <td style="padding: 10px; border: 1px solid #ccc;">
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" name="action" value="approve" style="background-color: green; color: white; padding: 5px 10px; border: none; cursor: pointer;">Approve</button>
+                            </form>
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" name="action" value="delete" style="background-color: red; color: white; padding: 5px 10px; border: none; cursor: pointer;">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p>No users are currently pending approval.</p>
+            {% endif %}
+
+            <hr style="margin-top: 30px; margin-bottom: 30px;">
+            
+            <h2>Approved Users ({{ approved_users|length }})</h2>
+            <table style="width: 50%; margin: 0 auto;">
+                <thead>
+                    <tr>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Email</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Is Admin</th>
+                        <th style="padding: 10px; border: 1px solid #ccc;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in approved_users %}
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ccc;">{{ user.email }}</td>
+                        <td style="padding: 10px; border: 1px solid #ccc;">{{ 'Yes' if user.is_admin else 'No' }}</td>
+                        <td style="padding: 10px; border: 1px solid #ccc;">
+                            {% if not user.is_admin %}
+                            <form method="POST" style="display: inline;">
+                                <input type="hidden" name="user_id" value="{{ user.id }}">
+                                <button type="submit" name="action" value="delete" style="background-color: red; color: white; padding: 5px 10px; border: none; cursor: pointer;">Delete</button>
+                            </form>
+                            {% else %}
+                            <span style="color: gray;">Cannot Delete Admin</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </body>
+</html>
