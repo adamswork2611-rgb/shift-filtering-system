@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, render_template, send_file, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
@@ -7,7 +8,8 @@ from filter import get_excel, filter_shift
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'iy"a*r8+6J_X""4'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+DB_URL = os.environ.get('DATABASE_URL', 'sqlite:///site.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = DB_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -160,4 +162,3 @@ def upload_file():
 if __name__ == '__main__':
     with app.app_context():
         db.create_all() 
-    app.run(debug=True)
